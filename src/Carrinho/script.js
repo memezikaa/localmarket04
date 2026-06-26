@@ -1,28 +1,23 @@
- $(document).ready(function() {
-    const carrinho = JSON.parse(localStorage.getItem("carrinho")) || []
-
+ $(document).ready(function(){
+    const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [
+    ]
     const listElement = $('#lista')
-
-    const totalElement = $("#total")
+    const totalElement = $('#total')
 
     function exibirCarrinho(){
         listElement.empty()
         let totalPreco = 0
-
         $.each(carrinho, function(index, item){
-            const listItem = $("<li>").text(`${item.desc} - Preço: $${item.preco.toFixed(2)}`)
-
-            const removeButton = $("<button>").text("❌").css("margin-left", "10px").click(function(){
+            const listItem = $("<li>").text(`R${item.desc} - Preço: R$${item.valor.toFixed(2)}`)
+            const removeButton = $("<button>").text("✖️").css("margin-left", "10px").click(function(){
                 removerItem(index)
             })
-
             listItem.append(removeButton)
             listElement.append(listItem)
 
-
-            totalPreco += item.preco
+            totalPreco += item.valor
         })
-        totalElement.text('Total:$$(total.Preco.toFixed(2)}')
+        totalElement.text(`Total: R$${totalPreco.toFixed(2)}`)
     }
 
     function removerItem(index){
@@ -30,14 +25,15 @@
         localStorage.setItem("carrinho", JSON.stringify(carrinho))
         exibirCarrinho()
     }
-    exibirCarrinho()
 
+        exibirCarrinho()
 })
+
 function gerar(){
-    const listaElement = document.getElementById("lista") 
-    const totalElement = document.getElementById("total") 
+    const listaElement = document.getElementById("lista")
+    const totalElement = document.getElementById("total")
     const listaClone = listaElement.cloneNode(true)
-    $(listaClone).find("button").remover()
+    $(listaClone).find("button").remove()
     const listaHtml = listaClone.innerHTML
     const totalHtml = totalElement.innerHTML
     const conteudoHTML = `
@@ -46,7 +42,27 @@ function gerar(){
                 <meta charset="UTF-8">
             </head>
             <body>
-                <h1>PEDIDO COMFIRMADO</h1>
-                <h3>Agradecemos sua compra e preferência.</h3> `
+                <h1>PEDIDO CONFIRMADO</h1>
+                <h3>Agradecemos a sua compra e sua preferência.</h3>
+                <br>
+                ${listaHtml}
+                <br>
+                <br>
+                ${totalHtml}
+            </body>
+        </html>
+    `
+
+    const blob = new Blob([conteudoHTML], {type: "aplication/nsword"})
+    const link = document.createElement("a")
+
+    link.href = URL.createObjectURL(blob)
+    link.download = "pedido.doc"
+    link.click()
+    document.getElementById("pedido").style.display = "block"
 }
 
+
+function successClose(){
+    document.getElementById("pedido").style.display = "none"
+}
